@@ -1,0 +1,15 @@
+// Look into error with GetCurrentObjectiveInfo() and save file loading
+// Fix Graffiti Art on Reset sometimes being nothing
+// Fix rep label showing incorrect rep
+
+?? Add Graffiti Triggers Somehow ???
+
+.. Fix ability stuff in save / loading
+
+// Core.Instance.Platform.User.UserIdentifier gets SteamID
+
+// BaseModule RestoreMouseInputState is a thing
+
+// StageManager.OnStageInitialized += is a thing
+
+// worldHandler.CurrentCamera.cullingMask = Enumerable.Range(0, 32).Where(i => i != 3).Aggregate(0, (newMask, i) => newMask | (1 << i));
