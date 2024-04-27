@@ -41,6 +41,9 @@ Custom saves can be found in:
 Modify the descriptions of the linked files using the format:
 `filename.brctools: short description of save`
 
+Saves are loaded automatically in alphabetical order of their filenames.
+Normal BRC files will not work, files must be created using the tool to generate a `.brctools` file of the Save Data.
+
 -----------------------
 
 [Keybind Reference](https://docs.unity3d.com/ScriptReference/KeyCode.html) (KeyCode Reference | Actual Key To Use):
