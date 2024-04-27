@@ -2,6 +2,12 @@
 
 Tools made for speedrun practice, routing, or just finding new things.
 
+Credits include:
+Ninja Cookie (Creation Of The Tool)
+Bytez (Created Default Save Files & Testing)
+
+Also thanks to original creators of the original tool as well as the upkept NinjaUtils (Renamed to PracticeUtils) for some reference into how to do some things, mainly on the side of Trigger display and research into how Graffiti's worked.
+
 ![20240427015119_1](https://github.com/Ninja-Cookie/BRCTools/assets/62808028/639a9344-cc85-477c-b329-db6c26b8c0c8)
 
 This was made once again from scratch, all the way up to what it is now.
