@@ -24,6 +24,8 @@ Some features of highlight include, but not limited to:
 - Reload level starting from where you entered it
 - Better Trigger Display
 
+Speed Values include: `V` for Vertical Speed, `H` for Horizontal Speed, `S` for Storage Speed. (From Billboards)
+
 -----------------------
 
 Installion:
