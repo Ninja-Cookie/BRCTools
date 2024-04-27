@@ -4,7 +4,6 @@ Tools made for speedrun practice, routing, or just finding new things.
 
 ![20240427015119_1](https://github.com/Ninja-Cookie/BRCTools/assets/62808028/639a9344-cc85-477c-b329-db6c26b8c0c8)
 
-
 This was made once again from scratch, all the way up to what it is now.
 
 Some features of highlight include, but not limited to:
@@ -18,10 +17,20 @@ Some features of highlight include, but not limited to:
 - Better Trigger Display
 
 Saves can be found in:
-`/config/BRCTools/SAVES/`
+`\config\BRCTools\SAVES\`
 
 Modify the descriptions of the linked files using the format:
 `filename.brctools: short description of save`
+
+-----------------------
+
+Installion:
+- Download [BepInEx](https://github.com/BepInEx/BepInEx/releases/tag/v5.4.22) if not installed already and follow its install instructions.
+- If you have a mod manager, import the Zip using the [Release](https://github.com/Ninja-Cookie/BRCTools/releases) build, else --
+- Within your Bomb Rush Cyberfunk BepInEx folder (\BombRushCyberfunk\BepInEx\), extract the `plugins` and `config` folder.
+- Run the game and let config files generate, these can then be found in `\BombRushCyberfunk\BepInEx\config\BRCTools\`
+
+Default Keybinds for the menu include `;` to Open and Close it, and `P` to activate Mouse interaction on the menu.
 
 -----------------------
 
