@@ -16,12 +16,6 @@ Some features of highlight include, but not limited to:
 - Reload level starting from where you entered it
 - Better Trigger Display
 
-Saves can be found in:
-`\config\BRCTools\SAVES\`
-
-Modify the descriptions of the linked files using the format:
-`filename.brctools: short description of save`
-
 -----------------------
 
 Installion:
@@ -31,6 +25,13 @@ Installion:
 - Run the game and let config files generate, these can then be found in `\BombRushCyberfunk\BepInEx\config\BRCTools\`
 
 Default Keybinds for the menu include `;` to Open and Close it, and `P` to activate Mouse interaction on the menu.
+Config Files include: `Settings.cfg` and `Keybinds.cfg`, which allow you to change some settings with the tool and adjust all Keybinds, including unbinding by leaving them blank.
+
+Custom saves can be found in:
+`\config\BRCTools\SAVES\`
+
+Modify the descriptions of the linked files using the format:
+`filename.brctools: short description of save`
 
 -----------------------
 
