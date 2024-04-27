@@ -3,8 +3,8 @@
 Tools made for speedrun practice, routing, or just finding new things.
 
 Credits include:
-Ninja Cookie (Creation Of The Tool)
-Bytez (Created Default Save Files & Testing)
+- Ninja Cookie (Creation Of The Tool)
+- Bytez (Created Default Save Files & Testing)
 
 Also thanks to original creators of the original tool as well as the upkept NinjaUtils (Renamed to PracticeUtils) for some reference into how to do some things, mainly on the side of Trigger display and research into how Graffiti's worked.
 
