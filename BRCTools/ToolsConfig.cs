@@ -29,6 +29,8 @@ namespace BRCTools
         public static string    folder_saves    = Path.Combine(folder_config,       saveFolderName);
         public static string    file_desc       = Path.Combine(folder_saves,        $"{descFileName}.txt");
 
+        public static HashSet<string> desc_contents = new HashSet<string>();
+
         private static List<string> saves = new List<string>();
         public static Dictionary<string, string> files_saves = new Dictionary<string, string>();
 
@@ -134,22 +136,30 @@ namespace BRCTools
                         typeof(KeyBinds).GetField(field, BindingFlags.Static | BindingFlags.Public).SetValue(null, realKey);
                 }
 
-                // Get File Names
-                if (!Directory.Exists(folder_saves))
-                    Directory.CreateDirectory(folder_saves);
+                UpdateSaveFiles();
+            }
+        }
 
-                if (Directory.Exists(folder_saves))
+        public void UpdateSaveFiles()
+        {
+            saves.Clear();
+            files_saves.Clear();
+
+            // Get File Names
+            if (!Directory.Exists(folder_saves))
+                Directory.CreateDirectory(folder_saves);
+
+            if (Directory.Exists(folder_saves))
+            {
+                foreach (var file in Directory.GetFiles(folder_saves))
                 {
-                    foreach (var file in Directory.GetFiles(folder_saves))
+                    if (file.EndsWith(ext_saves))
                     {
-                        if (file.EndsWith(ext_saves))
-                        {
-                            string filePath = Path.Combine(folder_saves, file);
-                            saves.Add(filePath);
-                        }
+                        string filePath = Path.Combine(folder_saves, file);
+                        saves.Add(filePath);
                     }
-                    saves.Sort();
                 }
+                saves.Sort();
 
                 // Get File Descriptions
                 if (!File.Exists(file_desc))
@@ -161,21 +171,22 @@ namespace BRCTools
                     {
                         string saveFile = $"{save.Remove(0, save.LastIndexOf(@"\") + 1)}:";
 
-                        foreach (var line in File.ReadAllLines(file_desc).Where(x => x.StartsWith(saveFile)))
-                        {
-                            string description      = line.Remove(0, saveFile.Length); description = description.Replace("\t", string.Empty);
-                            string testEmptyString  = description.Replace(" ", string.Empty);
+                        string line = File.ReadAllLines(file_desc).FirstOrDefault(x => x.StartsWith(saveFile));
+                        if (line == default) { line = $"{saveFile} {saveFile.Substring(0, saveFile.Length - 1).Replace(ext_saves, string.Empty)}"; File.AppendAllText(file_desc, $"\n{line}"); }
 
-                            while (description.Length > 0 && testEmptyString != "" && description.StartsWith(" "))
-                                description = description.Remove(0, 1);
+                        string description = line.Remove(0, saveFile.Length); description = description.Replace("\t", string.Empty);
+                        string testEmptyString = description.Replace(" ", string.Empty);
 
-                            if (description.Count() > 30)
-                                description = description.Substring(0, 30);
+                        while (description.Length > 0 && testEmptyString != "" && description.StartsWith(" "))
+                            description = description.Remove(0, 1);
 
+                        if (description.Count() > 30)
+                            description = description.Substring(0, 30);
+
+                        if (!files_saves.Keys.ToArray().Contains(save))
                             files_saves.Add(save, description);
-                            break;
-                        }
                     }
+                    desc_contents = File.ReadAllLines(file_desc).ToHashSet<string>();
                     files_saves = files_saves.OrderBy(x => x.Key, StringComparer.OrdinalIgnoreCase).ToDictionary(x => x.Key, y => y.Value);
                 }
             }

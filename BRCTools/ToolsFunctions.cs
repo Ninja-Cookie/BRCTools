@@ -180,6 +180,7 @@ namespace BRCTools
             NO_ACTIVE_GAME,
             NO_SAVE,
             NO_SAVESLOT,
+            SAVE_FILE_CORRUPT,
             FATEL,
             SAVE_CREATED
         }
@@ -207,6 +208,10 @@ namespace BRCTools
 
                 case ErrorType.NO_SAVESLOT:
                     ShowError("No Active Save Slot Found");
+                break;
+
+                case ErrorType.SAVE_FILE_CORRUPT:
+                    ShowError("Save File Could Not Be Loaded");
                 break;
 
                 case ErrorType.FATEL:
@@ -655,8 +660,28 @@ namespace BRCTools
             return i.ToString();
         }
 
+        private void UpdateSaveFiles()
+        {
+            if (Directory.Exists(ToolsConfig.folder_saves) && File.Exists(ToolsConfig.file_desc))
+            {
+                string[] files = Directory.GetFiles(ToolsConfig.folder_saves).Where(x => x.EndsWith(ToolsConfig.ext_saves)).ToArray();
+                if ((files.Count() != ToolsConfig.files_saves.Keys.Count()) || !files.All(x => ToolsConfig.files_saves.Keys.Contains(x)) || !File.ReadAllLines(ToolsConfig.file_desc).ToHashSet<string>().SequenceEqual(ToolsConfig.desc_contents))
+                {
+                    ToolsConfig.Instance.UpdateSaveFiles();
+                    Debug.Log("Files Changed");
+                }
+            }
+            else
+            {
+                ToolsConfig.files_saves.Clear();
+                Debug.Log("Files Gone");
+            }
+        }
+
         public string FuncChangeSave(int i)
         {
+            UpdateSaveFiles();
+
             int newSaveIndex = Attributes.saveIndex + i;
             int max = ToolsConfig.files_saves.Keys.Count - 1;
             Attributes.saveIndex = newSaveIndex < 0 ? Mathf.Max(max, 0) : newSaveIndex > max ? 0 : newSaveIndex;
@@ -681,31 +706,35 @@ namespace BRCTools
 
                 if (File.Exists(path) && baseMod != null && saveManager != null && saveManager.CurrentSaveSlot != null && Game.GetPlayer() != null && saveSlotHandler != null)
                 {
-                    using (BinaryReader dataRead = new BinaryReader(File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None)))
+                    try
                     {
-                        SaveSlotData saveSlotData = new SaveSlotData();
-                        saveSlotData.Read(dataRead);
-
-                        saveSlotData.saveSlotId = saveManager.CurrentSaveSlot.saveSlotId;
-
-                        if (Game.TrySetValue(Game.fiSaveSlotHandler, saveSlotHandler, "currentSaveSlot", saveSlotData))
+                        using (BinaryReader dataRead = new BinaryReader(File.Open(path, FileMode.Open, FileAccess.Read, FileShare.None)))
                         {
-                            loadingFile = true; saveManager.SaveCurrentSaveSlotImmediate();
-                            baseMod.UnPauseGame(PauseType.ForceOff);
-                            baseMod.UnloadCurrentStage();
-                            Core.Instance.Platform.User.LogOut();
+                            SaveSlotData saveSlotData = new SaveSlotData();
+                            saveSlotData.Read(dataRead);
 
-                            if (Game.TryGetValue(Game.fiBaseMod, baseMod, "currentSceneSetupInstructions", out List<ASceneSetupInstruction> currentSceneSetupInstructions))
+                            saveSlotData.saveSlotId = saveManager.CurrentSaveSlot.saveSlotId;
+
+                            if (Game.TrySetValue(Game.fiSaveSlotHandler, saveSlotHandler, "currentSaveSlot", saveSlotData))
                             {
-                                for (int i = currentSceneSetupInstructions.Count - 1; i >= 0; i--)
-                                {
-                                    Game.invoke(baseMod, "StopLoadInstruction", new object[] { currentSceneSetupInstructions[i] }, Game.miBaseMod);
-                                }
-                            }
+                                loadingFile = true; saveManager.SaveCurrentSaveSlotImmediate();
+                                baseMod.UnPauseGame(PauseType.ForceOff);
+                                baseMod.UnloadCurrentStage();
+                                Core.Instance.Platform.User.LogOut();
 
-                            baseMod.StartGameToStage(Stage.Prelude);
+                                if (Game.TryGetValue(Game.fiBaseMod, baseMod, "currentSceneSetupInstructions", out List<ASceneSetupInstruction> currentSceneSetupInstructions))
+                                {
+                                    for (int i = currentSceneSetupInstructions.Count - 1; i >= 0; i--)
+                                    {
+                                        Game.invoke(baseMod, "StopLoadInstruction", new object[] { currentSceneSetupInstructions[i] }, Game.miBaseMod);
+                                    }
+                                }
+
+                                baseMod.StartGameToStage(Stage.Prelude);
+                            }
                         }
                     }
+                    catch(Exception e) { Debug.LogError(e); Error(ErrorType.SAVE_FILE_CORRUPT); }
                 }
                 else
                 {

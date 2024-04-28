@@ -394,6 +394,11 @@ namespace BRCTools
                 }
             }
         }
+
+        public static void Postfix(ref Collider other)
+        {
+            Debug.Log(other.tag);
+        }
     }
     */
 
