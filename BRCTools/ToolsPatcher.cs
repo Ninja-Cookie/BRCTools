@@ -63,7 +63,7 @@ namespace BRCTools
                 List<Stage> stages = new List<Stage> { Stage.Prelude, Stage.hideout, Stage.downhill, Stage.square, Stage.tower, Stage.Mall, Stage.pyramid, Stage.osaka };
 
                 BaseModule baseMod = Game.GetBaseModule();
-                if (!stages.Contains(lastStage) && baseMod != null)
+                if ((!stages.Contains(lastStage) && baseMod != null) || Settings.shouldLaunchToMenu)
                 {
                     baseMod.LoadMainMenuScene();
                     return false;

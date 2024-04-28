@@ -171,25 +171,25 @@ namespace BRCTools
 
             CreateLineNoExtra();
 
-            CreateButton(elementBaseX, Properties.line, elementBaseW, Properties.menu_element_h, toolsFunctions.FuncLoadSaveFile, "Load Selected Save", KeyBinds.key_goToSave);
+            CreateButton(elementBaseX, Properties.line, elementBaseW, Properties.menu_element_h, toolsFunctions.FuncLoadSaveFile, "Overwrite Slot With This Save", KeyBinds.key_goToSave);
 
             CreateLine();
 
-            CreateButton(elementBaseX, Properties.line, elementBaseW, Properties.menu_element_h, toolsFunctions.FuncCreateSaveFile, "Create Save File", KeyBinds.key_saveGame);
+            CreateButton(elementBaseX, Properties.line, elementBaseW, Properties.menu_element_h, toolsFunctions.FuncCreateSaveFile, "Create Save Of Here", KeyBinds.key_saveGame);
             // ------------------------------------------------------------------------
 
             CreateDivider();
 
             // --- DISABLE SAVING ---
             // ------------------------------------------------------------------------
-            CreateButton(elementBaseX, Properties.line, elementBaseW, Properties.menu_element_h, toolsFunctions.FuncDisSaving, "Disable Saving", KeyBinds.key_DisSaving, nameof(Toggles.saving));
+            CreateButton(elementBaseX, Properties.line, elementBaseW, Properties.menu_element_h, toolsFunctions.FuncDisSaving, "Disable Auto-Saving To Slot", KeyBinds.key_DisSaving, nameof(Toggles.saving));
             // ------------------------------------------------------------------------
 
             CreateLine();
 
             // --- LOAD SAVE ---
             // ------------------------------------------------------------------------
-            CreateButton(elementBaseX, Properties.line, elementBaseW, Properties.menu_element_h, toolsFunctions.FuncResGame, "Load Current Save", KeyBinds.key_ResGame);
+            CreateButton(elementBaseX, Properties.line, elementBaseW, Properties.menu_element_h, toolsFunctions.FuncResGame, "Load Current Slot Data", KeyBinds.key_ResGame);
             // ------------------------------------------------------------------------
 
             CreateDivider();
@@ -311,9 +311,9 @@ namespace BRCTools
 
             CreateButton(elementBaseX, Properties.line, elementBaseW, Properties.menu_element_h, toolsFunctions.FuncForcePolice, "Do Heckin Crime");
 
-            CreateLine();
+            //CreateLine();
 
-            CreateText(elementBaseX, Properties.line, elementBaseW, Properties.menu_element_h, $"More To Be Added...");
+            //CreateText(elementBaseX, Properties.line, elementBaseW, Properties.menu_element_h, $"More To Be Added...");
 
             CreateButton(elementBaseX, Properties.menu_current_y + Properties.menu_h - (Properties.menu_element_h + Properties.margin_h), elementBaseW, Properties.menu_element_h, ToggleExtraMenu, "Back ...");
             // ------------------------------------------------------------------------
@@ -369,6 +369,8 @@ namespace BRCTools
             {
                 if (text_speed_s == null) { text_speed_s = speed_s.GetComponent<Text>(); } if (text_shadow_speed_s == null) { text_shadow_speed_s = shadow_speed_s.GetComponent<Text>(); }
                 HandleText(player, text_speed_s, text_shadow_speed_s, $"S: {ToolsFunctions.Instance.GetStorageSpeed().ToString("0.00")}");
+                //if (ToolsGame.Game.TryGetValue(ToolsGame.Game.fiPlayer, ToolsGame.Game.GetPlayer(), "vertShape", out VertShape vertShape) && ToolsGame.Game.TryGetValue(ToolsGame.Game.fiPlayer, ToolsGame.Game.GetPlayer(), "vertPos", out Vector2 vertPos))
+                //HandleText(player, text_speed_s, text_shadow_speed_s, $"S: {(vertPos).magnitude.ToString("0.00")}");
             }
 
             if (cord_x != null)

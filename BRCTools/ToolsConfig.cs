@@ -62,6 +62,7 @@ namespace BRCTools
                 HandleSettingsEntry("Allow All Cutscene Skipping", ref Settings.shouldAllowCutsceneSkip);
                 HandleSettingsEntry("Speed Up Cutscene Skip If All", ref Settings.speedUpCutsceneSkip);
                 HandleSettingsEntry("Style Includes Special Skateboard", ref Settings.shouldHaveSpecial);
+                HandleSettingsEntry("Launch Game To Menu", ref Settings.shouldLaunchToMenu);
 
                 keybinds = new ConfigFile(GetAsCFGPath(keybindFileName), true);
 
@@ -256,6 +257,8 @@ namespace BRCTools
             public static bool speedUpCutsceneSkip = false;
 
             public static bool shouldHaveSpecial = false;
+
+            public static bool shouldLaunchToMenu = false;
         }
 
         public string GetKeyString(KeyCode keycode)

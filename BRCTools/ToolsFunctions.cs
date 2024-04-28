@@ -668,13 +668,11 @@ namespace BRCTools
                 if ((files.Count() != ToolsConfig.files_saves.Keys.Count()) || !files.All(x => ToolsConfig.files_saves.Keys.Contains(x)) || !File.ReadAllLines(ToolsConfig.file_desc).ToHashSet<string>().SequenceEqual(ToolsConfig.desc_contents))
                 {
                     ToolsConfig.Instance.UpdateSaveFiles();
-                    Debug.Log("Files Changed");
                 }
             }
             else
             {
                 ToolsConfig.files_saves.Clear();
-                Debug.Log("Files Gone");
             }
         }
 
@@ -734,7 +732,7 @@ namespace BRCTools
                             }
                         }
                     }
-                    catch(Exception e) { Debug.LogError(e); Error(ErrorType.SAVE_FILE_CORRUPT); }
+                    catch (Exception e) { Debug.LogError(e); Error(ErrorType.SAVE_FILE_CORRUPT); }
                 }
                 else
                 {
