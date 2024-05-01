@@ -8,7 +8,7 @@ namespace BRCTools
     {
         public const string pluginGuid      = "speedrunning.brc.brctools";
         public const string pluginName      = "BRCTools";
-        public const string pluginVersion   = "0.1.2";
+        public const string pluginVersion   = "0.1.3";
 
         private GameObject _mod;
 

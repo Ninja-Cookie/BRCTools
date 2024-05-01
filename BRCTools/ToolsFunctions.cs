@@ -75,6 +75,18 @@ namespace BRCTools
             private static float _savedSpeed = 0f;
             public static float savedSpeed { get { return _savedSpeed; } set { _savedSpeed = value; toolsGUI.UpdateFields(nameof(savedSpeed), value); } }
 
+            private static Ability _savedAbility = null;
+            public static Ability savedAbility { get { return _savedAbility; } set { _savedAbility = value; } }
+
+            private static bool _savedHasBoost = true;
+            public static bool savedHasBoost { get { return _savedHasBoost; } set { _savedHasBoost = value; } }
+
+            private static bool _savedHasDash = true;
+            public static bool savedHasDash { get { return _savedHasDash; } set { _savedHasDash = value; } }
+
+            private static int _savedAnim = -1;
+            public static int savedAnim { get { return _savedAnim; } set { _savedAnim = value; } }
+
             private static Vector3 _savedSpeedVector = Vector3.zero;
             public static Vector3 savedSpeedVector { get { return _savedSpeedVector; } set { _savedSpeedVector = value; } }
 
@@ -854,6 +866,10 @@ namespace BRCTools
             public MoveStyle    moveStyleEquip  { get { return Attributes.savedMovestyleEquip;      } set { Attributes.savedMovestyleEquip  = value; } }
             public bool         usingEquipment  { get { return Attributes.savedEquipmentUsing;      } set { Attributes.savedEquipmentUsing  = value; } }
             public float        storageSpeed    { get { return Attributes.savedStorage;             } set { Attributes.savedStorage         = value; } }
+            public Ability      ability         { get { return Attributes.savedAbility;             } set { Attributes.savedAbility         = value; } }
+            public int          animation       { get { return Attributes.savedAnim;                } set { Attributes.savedAnim            = value; } }
+            public bool         hasBoost        { get { return Attributes.savedHasBoost;            } set { Attributes.savedHasBoost        = value; } }
+            public bool         hasDash         { get { return Attributes.savedHasDash;             } set { Attributes.savedHasDash         = value; } }
         }
 
         public void FuncSave()
@@ -863,25 +879,33 @@ namespace BRCTools
             if
             (
                 player != null && wallrunLine != null &&
-                Game.TryGetValue(Game.fiPlayer, player, "boostCharge",              out float       boostCharge)            &&
-                Game.TryGetValue(Game.fiPlayer, player, "moveStyle",                out MoveStyle   moveStyle)              &&
-                Game.TryGetValue(Game.fiPlayer, player, "moveStyleEquipped",        out MoveStyle   moveStyleEquipped)      &&
-                Game.TryGetValue(Game.fiPlayer, player, "usingEquippedMovestyle",   out bool        usingEquippedMovestyle) &&
-                Game.TryGetValue(Game.fiWallrun,wallrunLine,"lastSpeed",            out float       lastSpeed)
+                Game.TryGetValue(Game.fiPlayer, player,         "boostCharge",              out float           boostCharge)            &&
+                Game.TryGetValue(Game.fiPlayer, player,         "moveStyle",                out MoveStyle       moveStyle)              &&
+                Game.TryGetValue(Game.fiPlayer, player,         "moveStyleEquipped",        out MoveStyle       moveStyleEquipped)      &&
+                Game.TryGetValue(Game.fiPlayer, player,         "usingEquippedMovestyle",   out bool            usingEquippedMovestyle) &&
+                Game.TryGetValue(Game.fiWallrun,wallrunLine,    "lastSpeed",                out float           lastSpeed)              &&
+                Game.TryGetValue(Game.fiPlayer, player,         "ability",                  out Ability         curAbility)             &&
+                Game.TryGetValue(Game.fiPlayer, player,         "curAnim",                  out int             curAnim)                &&
+                Game.TryGetValue(Game.fiPlayer, player,         "boostAbility",             out BoostAbility    boostAbility)           &&
+                Game.TryGetValue(Game.fiPlayer, player,         "airDashAbility",           out AirDashAbility  airDashAbility)
             )
             {
                 savedData = new SavedData()
                 {
-                    position        = player.tf.position,
-                    velocityDir     = player.motor.velocity.normalized,
-                    velocity        = player.motor.velocity.magnitude,
-                    velocityVector  = player.motor.velocity,
-                    rotation        = player.motor.rotation,
-                    boost           = boostCharge,
-                    moveStyleCurrent= moveStyle,
-                    moveStyleEquip  = moveStyleEquipped,
-                    usingEquipment  = usingEquippedMovestyle,
-                    storageSpeed    = lastSpeed
+                    position            = player.tf.position,
+                    velocityDir         = player.motor.velocity.normalized,
+                    velocity            = player.motor.velocity.magnitude,
+                    velocityVector      = player.motor.velocity,
+                    rotation            = player.motor.rotation,
+                    boost               = boostCharge,
+                    moveStyleCurrent    = moveStyle,
+                    moveStyleEquip      = moveStyleEquipped,
+                    usingEquipment      = usingEquippedMovestyle,
+                    storageSpeed        = lastSpeed,
+                    ability             = curAbility,
+                    animation           = curAnim,
+                    hasBoost            = boostAbility.haveAirStartBoost,
+                    hasDash             = airDashAbility.haveAirDash
                 };
             }
             else
@@ -929,8 +953,24 @@ namespace BRCTools
 
                 // Set Zip Storage Speed
                 SetStorageSpeed();
+                
+                if (savedData.animation != -1)
+                    player.PlayAnim(savedData.animation, true, true, 0f);
 
-                // TODO: Ability stuff broke
+                if (Game.TryGetValue(Game.fiPlayer, player, "boostAbility", out BoostAbility boostAbility) && Game.TryGetValue(Game.fiPlayer, player, "airDashAbility", out AirDashAbility airDashAbility))
+                {
+                    boostAbility.haveAirStartBoost = savedData.hasBoost;
+                    airDashAbility.haveAirDash = savedData.hasDash;
+                }
+
+                // Update Ability
+                if (savedData.ability != null)
+                {
+                    Type abiltiyType = savedData.ability.GetType();
+                    if      (abiltiyType == typeof(GrindAbility))       { GrindAbility          a = savedData.ability as GrindAbility;          a.cooldown      = 0f; }
+                    else if (abiltiyType == typeof(WallrunLineAbility)) { WallrunLineAbility    a = savedData.ability as WallrunLineAbility;    a.cooldownTimer = 0f; }
+                    else if (abiltiyType == typeof(HandplantAbility))   { HandplantAbility      a = savedData.ability as HandplantAbility;      a.cooldownTimer = 0f; }
+                }
             }
             else
             {
