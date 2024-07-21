@@ -586,13 +586,22 @@ namespace BRCTools
 
         public string FuncChangePlayer(int i)
         {
-            int newCharIndex        = Attributes.charIndex + i;
-            Attributes.charIndex    = newCharIndex < (int)Characters.girl1 ? (int)Characters.MAX - 1 : newCharIndex >= (int)Characters.MAX ? (int)Characters.girl1 : newCharIndex;
+            int newCharIndex = Attributes.charIndex + i;
+
+            int min = (int)Characters.girl1;
+            int max = CrewBoomHook.RealCharactersMax;
+
+            if (Enumerable.Range(min, max).Contains(newCharIndex) && ((Characters)newCharIndex == Characters.MAX || (Characters)newCharIndex == Characters.NONE))
+                newCharIndex += i;
+
+            Attributes.charIndex = newCharIndex < min ? max - 1 : newCharIndex >= max ? min : newCharIndex;
 
             Player player = Game.GetPlayer();
             if (player != null && Game.TryGetValue(Game.fiPlayer, player, "usingEquippedMovestyle", out bool usingEquippedMovestyle))
             {
-                player.SetCharacter((Characters)Attributes.charIndex, Attributes.outfitIndex);
+                player.SetCharacter((Characters)Attributes.charIndex, 0);
+                player.SetOutfit(Attributes.outfitIndex);
+
                 RefreshPlayer();
                 player.SwitchToEquippedMovestyle(usingEquippedMovestyle, showEffect: false);
 
@@ -604,11 +613,8 @@ namespace BRCTools
         }
         public string CharToName(int i)
         {
-            string charName = ((Characters)i).ToString();
-
-            if (toolsConfig.charToName.TryGetValue(charName, out string result))
-                return result;
-            return charName;
+            Characters character = (Characters)i;
+            return CrewBoomHook.GetCharacterName(character);
         }
 
         public string FuncChangeStyle(int i)
@@ -724,7 +730,7 @@ namespace BRCTools
                             saveSlotData.Read(dataRead);
 
                             saveSlotData.saveSlotId = saveManager.CurrentSaveSlot.saveSlotId;
-
+  
                             if (Game.TrySetValue(Game.fiSaveSlotHandler, saveSlotHandler, "currentSaveSlot", saveSlotData))
                             {
                                 loadingFile = true; saveManager.SaveCurrentSaveSlotImmediate();

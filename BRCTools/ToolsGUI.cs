@@ -324,6 +324,33 @@ namespace BRCTools
             }
         }
 
+        public GameObject GUICreateCursor(Vector2 pos, Vector2 size, Color color)
+        {
+            // Create Cursor
+            GameObject      squareObj       = new GameObject("Cursor", typeof(Image));
+            Image           square          = squareObj.GetComponent<Image>();
+            RectTransform   rectTransform   = squareObj.GetComponent<RectTransform>();
+
+            rectTransform.anchorMin         = new Vector2(0.5f, 0.5f);
+            rectTransform.anchorMax         = new Vector2(0.5f, 0.5f);
+            rectTransform.pivot             = new Vector2(0.5f, 0.5f);
+
+            squareObj.transform.SetParent(menu.transform);
+
+            square.raycastTarget = false;
+
+            // Set Color
+            square.color = color;
+
+            // Set Properties
+            rectTransform.position = pos;
+            rectTransform.sizeDelta = size;
+
+            //menuObjects.Add(squareObj);
+
+            return squareObj;
+        }
+
         public void GUICreateInputField(Vector2 pos, Vector2 size, string placeholder, PropertyInfo controlFloat, float xOffset = 0f, float yOffset = 1f)
         {
             // Create Input Field

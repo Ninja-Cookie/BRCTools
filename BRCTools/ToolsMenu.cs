@@ -1,5 +1,8 @@
 ﻿using Reptile;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.Design;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Events;
@@ -7,7 +10,6 @@ using UnityEngine.UI;
 using static BRCTools.ToolsConfig;
 using static BRCTools.ToolsFunctions;
 using static BRCTools.ToolsRef;
-using static System.Collections.Specialized.BitVector32;
 
 namespace BRCTools
 {
@@ -40,6 +42,7 @@ namespace BRCTools
             }
         }
 
+        private GameObject cursor;
         private void CreateMenu()
         {
             // Create base menu
@@ -317,6 +320,54 @@ namespace BRCTools
 
             CreateButton(elementBaseX, Properties.menu_current_y + Properties.menu_h - (Properties.menu_element_h + Properties.margin_h), elementBaseW, Properties.menu_element_h, ToggleExtraMenu, "Back ...");
             // ------------------------------------------------------------------------
+
+            /*
+            menuObjects = menu1Objects;
+            cursor = CreateCursor(elementBaseX, Properties.line, elementBaseW, Properties.menu_element_h, new Color(1f, 0f, 0f, 0.7f));
+            HandleCursor();
+            */
+        }
+
+        private int buttonIndexSelected = 0;
+        private List<GameObject> selections { get { return menuObjects?.Where(x => x.TryGetComponent(out Button _)).ToList(); } }
+        private void HandleCursor(int i = 0)
+        {
+            if (!toolsGUI.menuBlocked && selections?.Count() > 0)
+            {
+                buttonIndexSelected = buttonIndexSelected + i >= selections.Count() ? 0 : buttonIndexSelected + i < 0 ? selections.Count() - 1 : buttonIndexSelected + i;
+
+                GameObject selection = selections[buttonIndexSelected];
+                cursor.RectTransform().sizeDelta = selection.RectTransform().sizeDelta;
+                cursor.transform.position = new Vector2(selection.transform.position.x + (selection.RectTransform().sizeDelta.x / 2), selection.transform.position.y - (selection.RectTransform().sizeDelta.y / 2));
+            }
+        }
+
+        private void UpdateCursor()
+        {
+            // R3
+            if (Input.GetKeyDown(KeyCode.JoystickButton9))
+                toolsGUI.MenuToggleFocus();
+
+            if (!toolsGUI.menuBlocked && cursor != null)
+            {
+                cursor.gameObject.SetActive(true);
+
+                // Down D-Pad Input
+                if (ToolsGame.Game.GetGameInput().GetButtonNew(56))
+                    HandleCursor(1);
+
+                // Up D-Pad Input
+                else if (ToolsGame.Game.GetGameInput().GetButtonNew(21))
+                    HandleCursor(-1);
+
+                // Jump D-Pad Input
+                if (ToolsGame.Game.GetGameInput().GetButtonNew(7))
+                    selections[buttonIndexSelected]?.GetComponent<Button>().onClick.Invoke();
+            }
+            else
+            {
+                cursor.gameObject.SetActive(false);
+            }
         }
 
         GameObject speed_h;
@@ -369,8 +420,6 @@ namespace BRCTools
             {
                 if (text_speed_s == null) { text_speed_s = speed_s.GetComponent<Text>(); } if (text_shadow_speed_s == null) { text_shadow_speed_s = shadow_speed_s.GetComponent<Text>(); }
                 HandleText(player, text_speed_s, text_shadow_speed_s, $"S: {ToolsFunctions.Instance.GetStorageSpeed().ToString("0.00")}");
-                //if (ToolsGame.Game.TryGetValue(ToolsGame.Game.fiPlayer, ToolsGame.Game.GetPlayer(), "vertShape", out VertShape vertShape) && ToolsGame.Game.TryGetValue(ToolsGame.Game.fiPlayer, ToolsGame.Game.GetPlayer(), "vertPos", out Vector2 vertPos))
-                //HandleText(player, text_speed_s, text_shadow_speed_s, $"S: {(vertPos).magnitude.ToString("0.00")}");
             }
 
             if (cord_x != null)
@@ -393,6 +442,8 @@ namespace BRCTools
                 if (text_shadow_cord_z == null) { text_shadow_cord_z = shadow_cord_z.GetComponent<Text>(); }
                 HandleText(player, text_cord_z, text_shadow_cord_z, $"Z: {player?.transform.position.z.ToString("0.00")}");
             }
+
+            //UpdateCursor();
         }
 
         private void HandleText( Player player, Text textField, Text shadowText, string text )
@@ -428,6 +479,12 @@ namespace BRCTools
 
             UpdateLinks();
             ToolsFunctions.Instance.UpdateMenuInfo();
+
+            /*
+            menuObjects = showingExtra ? menu2Objects : menu1Objects;
+            buttonIndexSelected = selections != null ? Mathf.Max(selections.Count() - 1, 0) : 0;
+            HandleCursor();
+            */
         }
 
         private void CreateDivider()
@@ -461,6 +518,11 @@ namespace BRCTools
                 GUICreateBox(Pos(x + Properties.shadowOffset, y + Properties.shadowOffset), Size(w, h), Colors.shadow, xOffset, yOffset);
 
             GUICreateBox(Pos(x, y), Size(w, h), color, xOffset, yOffset);
+        }
+
+        private GameObject CreateCursor(int x, int y, int w, int h, Color color)
+        {
+            return GUICreateCursor(Pos(x, y), Size(w, h), color);
         }
 
         private void CreateSelector(int x, int y, int w, int h, Func<int, string> func, string text, KeyCode keybindDec = KeyCode.None, KeyCode keybindInc = KeyCode.None, string title = "", bool shadow = true, float xOffset = 0f, float yOffset = 1f)

@@ -15,6 +15,7 @@ namespace BRCTools
 {
     internal class ToolsPatcher : MonoBehaviour
     {
+        public static bool isFirstTime = true;
         private void Awake()
         {
             var harmony = new Harmony(Plugin.pluginGuid);
@@ -63,9 +64,10 @@ namespace BRCTools
                 List<Stage> stages = new List<Stage> { Stage.Prelude, Stage.hideout, Stage.downhill, Stage.square, Stage.tower, Stage.Mall, Stage.pyramid, Stage.osaka };
 
                 BaseModule baseMod = Game.GetBaseModule();
-                if ((!stages.Contains(lastStage) && baseMod != null) || Settings.shouldLaunchToMenu)
+                if (ToolsPatcher.isFirstTime && ((!stages.Contains(lastStage) && baseMod != null) || Settings.shouldLaunchToMenu))
                 {
                     baseMod.LoadMainMenuScene();
+                    ToolsPatcher.isFirstTime = false;
                     return false;
                 }
 
