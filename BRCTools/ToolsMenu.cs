@@ -314,9 +314,9 @@ namespace BRCTools
 
             CreateButton(elementBaseX, Properties.line, elementBaseW, Properties.menu_element_h, toolsFunctions.FuncForcePolice, "Do Heckin Crime");
 
-            //CreateLine();
+            CreateLine();
 
-            //CreateText(elementBaseX, Properties.line, elementBaseW, Properties.menu_element_h, $"More To Be Added...");
+            CreateButton(elementBaseX, Properties.line, elementBaseW, Properties.menu_element_h, toolsFunctions.FuncShowRespawn, "Show Respawn Point", field: nameof(Toggles.showrespawn));
 
             CreateButton(elementBaseX, Properties.menu_current_y + Properties.menu_h - (Properties.menu_element_h + Properties.margin_h), elementBaseW, Properties.menu_element_h, ToggleExtraMenu, "Back ...");
             // ------------------------------------------------------------------------

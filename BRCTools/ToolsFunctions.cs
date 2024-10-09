@@ -56,6 +56,9 @@ namespace BRCTools
 
             private static bool _autograf = false;
             public static bool autograf { get { return _autograf; } set { _autograf = value; toolsGUI.UpdateLinks(); } }
+
+            private static bool _showrespawn = false;
+            public static bool showrespawn { get { return _showrespawn; } set { _showrespawn = value; toolsGUI.UpdateLinks(); } }
         }
 
         public class Attributes : MonoBehaviour
@@ -1353,6 +1356,41 @@ namespace BRCTools
                 else
                     Error(ErrorType.NO_SAVE);
             }
+        }
+
+        private GameObject respawnPoint;
+        public  void FuncShowRespawn() { ToggleShowRespawn(); }
+        private void ToggleShowRespawn(bool forceOff = false)
+        {
+            if (forceOff ? Toggles.showrespawn = false : Toggles.showrespawn = !Toggles.showrespawn)
+            {
+                if (respawnPoint == null || FindObjectsOfType<GameObject>().FirstOrDefault(x => x == respawnPoint) == null)
+                {
+                    respawnPoint = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    respawnPoint.GetComponent<Renderer>().material.color = Color.cyan;
+                    Destroy(respawnPoint.GetComponent<Collider>());
+                    respawnPoint.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                }
+                else
+                {
+                    respawnPoint.SetActive(true);
+                }
+
+                activeFunctions += UpdateShowRespawn;
+            }
+            else
+            {
+                respawnPoint?.SetActive(false);
+
+                activeFunctions -= UpdateShowRespawn;
+            }
+        }
+        private void UpdateShowRespawn()
+        {
+            Player player = Game.GetPlayer();
+
+            if (respawnPoint != null && player != null)
+                respawnPoint.transform.position = player.GetSafeLocation().position;
         }
     }
 }

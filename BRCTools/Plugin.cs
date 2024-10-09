@@ -8,12 +8,15 @@ namespace BRCTools
     {
         public const string pluginGuid      = "speedrunning.brc.brctools";
         public const string pluginName      = "BRCTools";
-        public const string pluginVersion   = "0.2.1";
+        public const string pluginVersion   = "0.2.2";
 
         private GameObject _mod;
 
         private void Awake()
         {
+            // This mod is super jank code-wise but works.
+            // I want to re-make it again now that I know a little more but it is a lot.
+
             _mod = new GameObject();
             _mod.AddComponent<ToolsConfig>();
             _mod.AddComponent<ToolsGame>();
